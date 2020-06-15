@@ -14,7 +14,7 @@ mvnw.cmd
 .settings
 .springBeans
 .sts4-cache
-
+classes
 ### IntelliJ IDEA ###
 .idea
 *.iws
