@@ -1,12 +1,6 @@
 package com.mailReminder.restservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import javax.persistence.*;
-import java.util.Arrays;
 import java.util.Base64;
 
 @Entity

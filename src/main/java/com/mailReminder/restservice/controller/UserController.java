@@ -48,8 +48,17 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody User user){
+        User userFromDatabase = userRepository.findByLogin(user.getLogin());
+        if (userFromDatabase == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"errorCode\":400,\"errorMessage\":\"User does not exists\"}");
 
+        byte[] saltFromDatabase = userFromDatabase.getSalt();
+        user.setPasswordFromBytes(PasswordSecurer.hashPassword(Arrays.toString(user.getPassword()).toCharArray(), saltFromDatabase));
 
-        return  ResponseEntity.ok(user);
+        if(Arrays.equals(userFromDatabase.getPassword(), user.getPassword()))
+            return  ResponseEntity.ok(user);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errorCode\":400,\"errorMessage\":\"Password not valid\"}");
     }
 }
