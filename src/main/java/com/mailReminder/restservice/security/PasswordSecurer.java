@@ -7,7 +7,6 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
-//for future uses
 public class PasswordSecurer{
 
     public static byte[] getSalt() {
