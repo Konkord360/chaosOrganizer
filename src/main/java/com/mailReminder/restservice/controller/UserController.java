@@ -93,11 +93,20 @@ public class UserController {
             remindersJson.append("\"date\":\"");
             remindersJson.append(userReminders.get(i).getDate().concat("\","));
             remindersJson.append("\"hour\":\"");
-            remindersJson.append(userReminders.get(i).getHour().concat("\"}"));
+            remindersJson.append(userReminders.get(i).getHour().concat("\","));
+            remindersJson.append("\"reminderId\":\"");
+            remindersJson.append(String.valueOf(userReminders.get(i).getReminderId()).concat("\"}"));
             if(i < userReminders.size() - 1)
                 remindersJson.append(",");
         }
         remindersJson.append("]}");
         return ResponseEntity.status(HttpStatus.OK).body(remindersJson.toString());
+    }
+
+    @PostMapping("/deleteReminder")
+    public ResponseEntity<Object> deleteReminder(@RequestBody Reminder reminder){
+        Reminder databaseReminder = reminderRepository.findByReminderId(reminder.getReminderId());
+        reminderRepository.delete(databaseReminder);
+        return ResponseEntity.status(HttpStatus.OK).body("{\"errorCode\":0,\"errorMessage\":}");
     }
 }

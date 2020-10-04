@@ -38,7 +38,9 @@ public class Reminder {
     public String getOwnerLogin(){
         return this.ownerLogin;
     }
-
+    public long getReminderId(){
+        return reminderId;
+    }
     public User getUser() {
         return user;
     }

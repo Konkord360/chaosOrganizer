@@ -4,7 +4,9 @@ import com.mailReminder.restservice.model.Reminder;
 import com.mailReminder.restservice.model.User;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 public interface ReminderRepository extends CrudRepository<Reminder, Integer> {
-    User findByUser(User user);
-    User findByReminderId(long id);
+    List<Reminder> findByUser(User user);
+    Reminder findByReminderId(long id);
 }
