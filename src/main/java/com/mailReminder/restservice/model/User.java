@@ -1,7 +1,10 @@
 package com.mailReminder.restservice.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
+import com.mailReminder.restservice.model.Reminder;
 
 @Entity
 @Table(name = "users")
@@ -10,13 +13,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @OneToMany(mappedBy = "user")
+    private List<Reminder> reminders;
+
     private String login;
     private String mail;
-
-
     private char[] password;
-
-
     private byte[] salt;
 
     public User(String login, String mail, char[] password) {
@@ -25,20 +27,20 @@ public class User {
         this.password = password;
     }
 
+    public List<Reminder> getReminders() {
+        return reminders;
+    }
+
+    public void setReminders(List<Reminder> reminders) {
+        this.reminders = reminders;
+    }
+
     public User() {
         this.id = 0L;
         this.login = "";
         this.mail = "";
         this.password = null;
         this.salt = null;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getLogin() {
