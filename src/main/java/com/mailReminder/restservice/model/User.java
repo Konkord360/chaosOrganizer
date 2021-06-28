@@ -1,24 +1,26 @@
 package com.mailReminder.restservice.model;
 
-import javax.persistence.*;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
-import com.mailReminder.restservice.model.Reminder;
 
-@Entity
-@Table(name = "users")
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+
+
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @OneToMany(mappedBy = "user")
+    private String id;
     private List<Reminder> reminders;
 
+    @Indexed(unique = true)
     private String login;
     private String mail;
+
+    @JsonProperty(access =  JsonProperty.Access.WRITE_ONLY)
     private char[] password;
+    @JsonProperty(access =  JsonProperty.Access.WRITE_ONLY)
     private byte[] salt;
 
     public User(String login, String mail, char[] password) {
@@ -36,7 +38,7 @@ public class User {
     }
 
     public User() {
-        this.id = 0L;
+//        this.id = 0L;
         this.login = "";
         this.mail = "";
         this.password = null;
@@ -82,10 +84,10 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", login='" + login + '\'' +
+//                "id=" + id +
+                "login='" + login + '\'' +
                 ", mail='" + mail + '\'' +
-                ", password='" + password + '\'' +
+                ", password='" + Arrays.toString(password) + '\'' +
                 '}';
     }
 }

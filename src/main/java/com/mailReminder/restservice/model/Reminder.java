@@ -1,19 +1,13 @@
 package com.mailReminder.restservice.model;
 
-import javax.persistence.*;
 
-@Entity
-@Table(name = "reminders")
+import org.springframework.data.annotation.Id;
+
+import javax.swing.*;
+
 public class Reminder {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long reminderId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
-    private User user;
-
-    @Transient
+    private String id;
     private String ownerLogin;
     private String date;
     private String hour;
@@ -21,7 +15,6 @@ public class Reminder {
 
     public Reminder(){
         this.ownerLogin = null;
-        this.user = null;
         this.date = null;
         this.hour = null;
         this.contents = null;
@@ -32,22 +25,12 @@ public class Reminder {
         this.date = date;
         this.hour = hour;
         this.contents = contents;
-        this.user = null;
     }
 
     public String getOwnerLogin(){
         return this.ownerLogin;
     }
-    public long getReminderId(){
-        return reminderId;
-    }
-    public User getUser() {
-        return user;
-    }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public String getDate() {
         return date;
@@ -71,5 +54,18 @@ public class Reminder {
 
     public void setContents(String contents) {
         this.contents = contents;
+    }
+
+    @Override
+    public boolean equals(Object reminder)
+    {
+        if(reminder instanceof Reminder)
+        return this.ownerLogin.equals(((Reminder) reminder).getOwnerLogin()) &&
+                this.date.equals(((Reminder) reminder).getDate()) &&
+                this.hour.equals(((Reminder) reminder).getHour()) &&
+                this.contents.equals(((Reminder) reminder).getContents());
+        else
+            return false;
+
     }
 }
