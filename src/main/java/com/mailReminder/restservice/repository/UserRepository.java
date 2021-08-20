@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.CrudRepository;
 
 public interface UserRepository extends MongoRepository<User, Integer> {
-    public User findByLogin(String Login);
+    User findByLogin(String Login);
 }

@@ -12,11 +12,10 @@ import org.springframework.data.mongodb.core.index.Indexed;
 public class User {
     @Id
     private String id;
-    private List<Reminder> reminders;
-
     @Indexed(unique = true)
     private String login;
     private String mail;
+    private List<Reminder> reminders;
 
     @JsonProperty(access =  JsonProperty.Access.WRITE_ONLY)
     private char[] password;
@@ -38,7 +37,6 @@ public class User {
     }
 
     public User() {
-//        this.id = 0L;
         this.login = "";
         this.mail = "";
         this.password = null;
@@ -84,7 +82,6 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-//                "id=" + id +
                 "login='" + login + '\'' +
                 ", mail='" + mail + '\'' +
                 ", password='" + Arrays.toString(password) + '\'' +

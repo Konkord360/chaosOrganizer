@@ -34,6 +34,8 @@ public class UserController {
 
         System.out.println(Arrays.toString(hashedPassword));
         newUser.setPasswordFromBytes(hashedPassword);
+        hashedPassword = null;
+
         newUser.setSalt(salt);
         userRepository.save(newUser);
 
@@ -85,23 +87,9 @@ public class UserController {
     @GetMapping("/getReminders")
     public ResponseEntity<Object> getReminder(@RequestParam String userLogin){
         User user = userRepository.findByLogin(userLogin);
-        StringBuilder remindersJson = new StringBuilder("{\"reminders\":[");
         List<Reminder> userReminders = user.getReminders();
 
-        for (int i = 0; i < userReminders.size(); i++) {
-            remindersJson.append("{\"contents\":\"");
-            remindersJson.append(userReminders.get(i).getContents().concat("\","));
-            remindersJson.append("\"date\":\"");
-            remindersJson.append(userReminders.get(i).getDate().concat("\","));
-            remindersJson.append("\"hour\":\"");
-            remindersJson.append(userReminders.get(i).getHour().concat("\","));
-            remindersJson.append("\"reminderId\":\"");
-            remindersJson.append("\"}");
-            if(i < userReminders.size() - 1)
-                remindersJson.append(",");
-        }
-        remindersJson.append("]}");
-        return ResponseEntity.status(HttpStatus.OK).body(remindersJson.toString());
+        return ResponseEntity.status(HttpStatus.OK).body(userReminders);
     }
 
     @DeleteMapping("/deleteReminder")

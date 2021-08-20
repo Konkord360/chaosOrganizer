@@ -1,13 +1,6 @@
 package com.mailReminder.restservice.model;
 
-
-import org.springframework.data.annotation.Id;
-
-import javax.swing.*;
-
 public class Reminder {
-    @Id
-    private String id;
     private String ownerLogin;
     private String date;
     private String hour;
