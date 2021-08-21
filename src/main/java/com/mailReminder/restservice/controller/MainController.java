@@ -1,5 +1,6 @@
 package com.mailReminder.restservice.controller;
 
+import com.mailReminder.restservice.model.Payment;
 import com.mailReminder.restservice.model.Reminder;
 import com.mailReminder.restservice.model.User;
 import com.mailReminder.restservice.repository.UserRepository;
@@ -12,11 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-public class UserController {
+public class MainController {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserController(UserRepository userRepository) {
+    public MainController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -50,7 +51,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody User user){
+    public ResponseEntity<Object> login(@RequestBody User user) {
         User userFromDatabase = userRepository.findByLogin(user.getLogin());
         if (userFromDatabase == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -59,7 +60,7 @@ public class UserController {
         byte[] saltFromDatabase = userFromDatabase.getSalt();
         user.setPasswordFromBytes(PasswordSecurer.hashPassword(Arrays.toString(user.getPassword()).toCharArray(), saltFromDatabase));
 
-        if(Arrays.equals(userFromDatabase.getPassword(), user.getPassword())) {
+        if (Arrays.equals(userFromDatabase.getPassword(), user.getPassword())) {
             user.setPassword(null);
             return ResponseEntity.ok(user);
         }
@@ -68,24 +69,24 @@ public class UserController {
     }
 
     @PatchMapping("/addReminder")
-    public ResponseEntity<Object> addReminder(@RequestBody Reminder reminder){
+    public ResponseEntity<Object> addReminder(@RequestBody Reminder reminder) {
 
         System.out.println(reminder.toString());
         User databaseUser = userRepository.findByLogin(reminder.getOwnerLogin());
 
         Optional<List<Reminder>> userReminders = Optional.ofNullable(databaseUser.getReminders());
-        if(userReminders.isPresent()){
+        if (userReminders.isPresent()) {
             userReminders.get().add(reminder);
             databaseUser.setReminders(userReminders.get());
-        }else
+        } else
             databaseUser.setReminders(List.of(reminder));
 
         userRepository.save(databaseUser);
-        return ResponseEntity.status(HttpStatus.OK).body("OK");
+        return ResponseEntity.status(HttpStatus.OK).body("{\"errorCode\":0,\"errorMessage\":\"OK\"}");
     }
 
     @GetMapping("/getReminders")
-    public ResponseEntity<Object> getReminder(@RequestParam String userLogin){
+    public ResponseEntity<Object> getReminder(@RequestParam String userLogin) {
         User user = userRepository.findByLogin(userLogin);
         List<Reminder> userReminders = user.getReminders();
 
@@ -93,13 +94,48 @@ public class UserController {
     }
 
     @DeleteMapping("/deleteReminder")
-    public ResponseEntity<Object> deleteReminder(@RequestBody Reminder reminder){
+    public ResponseEntity<Object> deleteReminder(@RequestBody Reminder reminder) {
         User user = userRepository.findByLogin(reminder.getOwnerLogin());
         Optional<Reminder> reminderToBeDeleted = user.getReminders().stream().filter((userReminder) -> userReminder.equals(reminder)).findFirst();
-        if(reminderToBeDeleted.isPresent()){
+        if (reminderToBeDeleted.isPresent()) {
             user.getReminders().remove(reminderToBeDeleted.get());
             userRepository.save(user);
             return ResponseEntity.status(HttpStatus.OK).body("{\"Message\":\"Successfully deleted\"}");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"errorCode\":404,\"errorMessage\":\"Reminder not found\"}");
+    }
+
+    @PatchMapping("/addPayment")
+    public ResponseEntity<Object> addPayment(@RequestBody Payment payment) {
+        User databaseUser = userRepository.findByLogin(payment.getOwnerLogin());
+        Optional<List<Payment>> userPayments = Optional.ofNullable(databaseUser.getPayments());
+
+        if (userPayments.isPresent()) {
+            userPayments.get().add(payment);
+            databaseUser.setPayments(userPayments.get());
+        } else
+            databaseUser.setPayments(List.of(payment));
+
+        userRepository.save(databaseUser);
+        return ResponseEntity.status(HttpStatus.OK).body("{\"errorCode\":0,\"errorMessage\":\"OK\"}");
+    }
+
+    @GetMapping("/getPayments")
+    public ResponseEntity<Object> getPayment(@RequestParam String userLogin) {
+        User user = userRepository.findByLogin(userLogin);
+        List<Payment> userPayments = user.getPayments();
+
+        return ResponseEntity.status(HttpStatus.OK).body(userPayments);
+    }
+
+    @DeleteMapping("/deletePayment")
+    public ResponseEntity<Object> deletePayment(@RequestBody Payment payment) {
+        User user = userRepository.findByLogin(payment.getOwnerLogin());
+        Optional<Payment> paymentToBeDeleted = user.getPayments().stream().filter((userPayment) -> userPayment.equals(payment)).findFirst();
+        if (paymentToBeDeleted.isPresent()) {
+            user.getPayments().remove(paymentToBeDeleted.get());
+            userRepository.save(user);
+            return ResponseEntity.status(HttpStatus.OK).body("{\"errorCode\":0,\"Message\":\"Successfully deleted\"}");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"errorCode\":404,\"errorMessage\":\"Reminder not found\"}");
     }
