@@ -16,10 +16,11 @@ public class User {
     private String login;
     private String mail;
     private List<Reminder> reminders;
+    private List<Payment> payments;
 
-    @JsonProperty(access =  JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private char[] password;
-    @JsonProperty(access =  JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private byte[] salt;
 
     public User(String login, String mail, char[] password) {
@@ -28,12 +29,29 @@ public class User {
         this.password = password;
     }
 
+    public User(String login, String mail, List<Reminder> reminders, List<Payment> payments, char[] password, byte[] salt) {
+        this.login = login;
+        this.mail = mail;
+        this.reminders = reminders;
+        this.payments = payments;
+        this.password = password;
+        this.salt = salt;
+    }
+
     public List<Reminder> getReminders() {
         return reminders;
     }
 
     public void setReminders(List<Reminder> reminders) {
         this.reminders = reminders;
+    }
+
+    public List<Payment> getPayments() {
+        return payments;
+    }
+
+    public void setPayments(List<Payment> payments) {
+        this.payments = payments;
     }
 
     public User() {
@@ -67,7 +85,7 @@ public class User {
         this.password = password;
     }
 
-    public void setPasswordFromBytes(byte[] password){
+    public void setPasswordFromBytes(byte[] password) {
         this.password = Base64.getEncoder().encodeToString(password).toCharArray();
     }
 

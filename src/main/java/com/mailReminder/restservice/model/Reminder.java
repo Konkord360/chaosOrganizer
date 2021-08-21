@@ -6,24 +6,27 @@ public class Reminder {
     private String hour;
     private String contents;
 
-    public Reminder(){
+    public Reminder() {
         this.ownerLogin = null;
         this.date = null;
         this.hour = null;
         this.contents = null;
     }
 
-    private Reminder(String ownerLogin, String date, String hour, String contents){
+    public Reminder(String ownerLogin, String date, String hour, String contents) {
         this.ownerLogin = ownerLogin;
         this.date = date;
         this.hour = hour;
         this.contents = contents;
     }
 
-    public String getOwnerLogin(){
+    public String getOwnerLogin() {
         return this.ownerLogin;
     }
 
+    public void setOwnerLogin(String ownerLogin) {
+        this.ownerLogin = ownerLogin;
+    }
 
     public String getDate() {
         return date;
@@ -50,13 +53,12 @@ public class Reminder {
     }
 
     @Override
-    public boolean equals(Object reminder)
-    {
-        if(reminder instanceof Reminder)
-        return this.ownerLogin.equals(((Reminder) reminder).getOwnerLogin()) &&
-                this.date.equals(((Reminder) reminder).getDate()) &&
-                this.hour.equals(((Reminder) reminder).getHour()) &&
-                this.contents.equals(((Reminder) reminder).getContents());
+    public boolean equals(Object reminder) {
+        if (reminder instanceof Reminder)
+            return this.ownerLogin.equals(((Reminder) reminder).getOwnerLogin()) &&
+                    this.date.equals(((Reminder) reminder).getDate()) &&
+                    this.hour.equals(((Reminder) reminder).getHour()) &&
+                    this.contents.equals(((Reminder) reminder).getContents());
         else
             return false;
 
