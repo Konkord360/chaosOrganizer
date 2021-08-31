@@ -4,46 +4,96 @@ import java.math.BigDecimal;
 
 public class Payment {
     private String ownerLogin;
-    private BigDecimal amountOfOnePayment;
-    private BigDecimal finalAmount;
-    private String payDeadline;
+    private String paymentTitle;
+    private BigDecimal amountOfSinglePayment;
+    private BigDecimal wholeAmount;
+    private String deadline;
+    private String receiverIBAN;
+    private String receiverName;
+    private String senderIBAN;
+    private BigDecimal payedByNow;
 
-    public Payment(String ownerLogin, BigDecimal amountOfOnePayment, BigDecimal finalAmount, String payDeadline) {
+    public Payment(String ownerLogin, String paymentTitle, BigDecimal amountOfSinglePayment, BigDecimal wholeAmount, String deadline, String receiverIBAN, String receiverName, String senderIBAN, BigDecimal payedByNow) {
         this.ownerLogin = ownerLogin;
-        this.amountOfOnePayment = amountOfOnePayment;
-        this.finalAmount = finalAmount;
-        this.payDeadline = payDeadline;
+        this.paymentTitle = paymentTitle;
+        this.amountOfSinglePayment = amountOfSinglePayment;
+        this.wholeAmount = wholeAmount;
+        this.deadline = deadline;
+        this.receiverIBAN = receiverIBAN;
+        this.receiverName = receiverName;
+        this.senderIBAN = senderIBAN;
+        this.payedByNow = payedByNow;
     }
 
     public String getOwnerLogin() {
-        return this.ownerLogin;
-    }
-
-    public BigDecimal getAmountOfOnePayment() {
-        return this.amountOfOnePayment;
+        return ownerLogin;
     }
 
     public void setOwnerLogin(String ownerLogin) {
         this.ownerLogin = ownerLogin;
     }
 
-    public void setAmountOfOnePayment(BigDecimal amountOfOnePayment) {
-        this.amountOfOnePayment = amountOfOnePayment;
+    public String getPaymentTitle() {
+        return paymentTitle;
     }
 
-    public BigDecimal getFinalAmount() {
-        return finalAmount;
+    public void setPaymentTitle(String paymentTitle) {
+        this.paymentTitle = paymentTitle;
     }
 
-    public void setFinalAmount(BigDecimal finalAmount) {
-        this.finalAmount = finalAmount;
+    public BigDecimal getAmountOfSinglePayment() {
+        return amountOfSinglePayment;
     }
 
-    public String getPayDeadline() {
-        return payDeadline;
+    public void setAmountOfSinglePayment(BigDecimal amountOfSinglePayment) {
+        this.amountOfSinglePayment = amountOfSinglePayment;
     }
 
-    public void setPayDeadline(String payDeadline) {
-        this.payDeadline = payDeadline;
+    public BigDecimal getWholeAmount() {
+        return wholeAmount;
+    }
+
+    public void setWholeAmount(BigDecimal wholeAmount) {
+        this.wholeAmount = wholeAmount;
+    }
+
+    public String getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(String deadline) {
+        this.deadline = deadline;
+    }
+
+    public String getReceiverIBAN() {
+        return receiverIBAN;
+    }
+
+    public void setReceiverIBAN(String receiverIBAN) {
+        this.receiverIBAN = receiverIBAN;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public String getSenderIBAN() {
+        return senderIBAN;
+    }
+
+    public void setSenderIBAN(String senderIBAN) {
+        this.senderIBAN = senderIBAN;
+    }
+
+    public BigDecimal getPayedByNow() {
+        return payedByNow;
+    }
+
+    public void setPayedByNow(BigDecimal payedByNow) {
+        this.payedByNow = payedByNow;
     }
 }
