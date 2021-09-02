@@ -5,12 +5,14 @@ import com.mailReminder.restservice.model.Reminder;
 import com.mailReminder.restservice.model.User;
 import com.mailReminder.restservice.repository.UserRepository;
 import com.mailReminder.restservice.security.PasswordSecurer;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
 @CrossOrigin(origins = "*")
 @RestController
 public class MainController {
@@ -105,19 +107,34 @@ public class MainController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"errorCode\":404,\"errorMessage\":\"Reminder not found\"}");
     }
 
-    @PatchMapping("/addPayment")
-    public ResponseEntity<Object> addPayment(@RequestBody Payment payment) {
-        User databaseUser = userRepository.findByLogin(payment.getOwnerLogin());
+    @PostMapping("/addPayment")
+    public ResponseEntity<Object> addPayment(@RequestBody Payment payment, @RequestParam String ownerLogin) {
+        System.out.println("Add payment request received for user: ".concat(ownerLogin));
+        System.out.println(payment);
+        User databaseUser = userRepository.findByLogin(ownerLogin);
         Optional<List<Payment>> userPayments = Optional.ofNullable(databaseUser.getPayments());
 
         if (userPayments.isPresent()) {
+            payment.setId(ObjectId.get());
             userPayments.get().add(payment);
             databaseUser.setPayments(userPayments.get());
         } else
             databaseUser.setPayments(List.of(payment));
 
         userRepository.save(databaseUser);
-        return ResponseEntity.status(HttpStatus.OK).body("{\"errorCode\":0,\"errorMessage\":\"OK\"}");
+        return ResponseEntity.status(HttpStatus.OK).body(payment);
+    }
+
+    @PatchMapping("/modifyPayment")
+    public ResponseEntity<Object> modifyPayment(@RequestParam String ownerLogin, @RequestParam int paymentIndex, @RequestBody Payment payment) {
+        User user = userRepository.findByLogin(ownerLogin);
+
+        List<Payment> userPayments = user.getPayments();
+
+        userPayments.remove(paymentIndex);
+        userPayments.add(paymentIndex, payment);
+        userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.OK).body(user.getPayments());
     }
 
     @GetMapping("/getPayments")
@@ -129,13 +146,13 @@ public class MainController {
     }
 
     @DeleteMapping("/deletePayment")
-    public ResponseEntity<Object> deletePayment(@RequestBody Payment payment) {
-        User user = userRepository.findByLogin(payment.getOwnerLogin());
-        Optional<Payment> paymentToBeDeleted = user.getPayments().stream().filter((userPayment) -> userPayment.equals(payment)).findFirst();
-        if (paymentToBeDeleted.isPresent()) {
-            user.getPayments().remove(paymentToBeDeleted.get());
+    public ResponseEntity<Object> deletePayment(@RequestParam String ownerLogin, @RequestParam int paymentIndex) {
+        User user = userRepository.findByLogin(ownerLogin);
+        List<Payment> userPayments = user.getPayments();
+        if (userPayments != null && !userPayments.isEmpty() && userPayments.size() >= paymentIndex) {
+            user.getPayments().remove(paymentIndex);
             userRepository.save(user);
-            return ResponseEntity.status(HttpStatus.OK).body("{\"errorCode\":0,\"Message\":\"Successfully deleted\"}");
+            return ResponseEntity.status(HttpStatus.OK).body(user.getPayments());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"errorCode\":404,\"errorMessage\":\"Reminder not found\"}");
     }

@@ -7,8 +7,9 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-
+@Document
 public class User {
     @Id
     private String id;
@@ -27,6 +28,16 @@ public class User {
         this.login = login;
         this.mail = mail;
         this.password = password;
+    }
+
+    public User(String id, String login, String mail, List<Reminder> reminders, List<Payment> payments, char[] password, byte[] salt) {
+        this.id = id;
+        this.login = login;
+        this.mail = mail;
+        this.reminders = reminders;
+        this.payments = payments;
+        this.password = password;
+        this.salt = salt;
     }
 
     public User(String login, String mail, List<Reminder> reminders, List<Payment> payments, char[] password, byte[] salt) {
@@ -89,20 +100,19 @@ public class User {
         this.password = Base64.getEncoder().encodeToString(password).toCharArray();
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public byte[] getSalt() {
         return salt;
     }
 
     public void setSalt(byte[] salt) {
         this.salt = salt;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "login='" + login + '\'' +
-                ", mail='" + mail + '\'' +
-                ", password='" + Arrays.toString(password) + '\'' +
-                '}';
     }
 }

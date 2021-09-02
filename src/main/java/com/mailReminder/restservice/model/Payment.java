@@ -1,9 +1,13 @@
 package com.mailReminder.restservice.model;
 
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+
 import java.math.BigDecimal;
 
 public class Payment {
-    private String ownerLogin;
+    @Id
+    private ObjectId id;
     private String paymentTitle;
     private BigDecimal amountOfSinglePayment;
     private BigDecimal wholeAmount;
@@ -13,8 +17,8 @@ public class Payment {
     private String senderIBAN;
     private BigDecimal payedByNow;
 
-    public Payment(String ownerLogin, String paymentTitle, BigDecimal amountOfSinglePayment, BigDecimal wholeAmount, String deadline, String receiverIBAN, String receiverName, String senderIBAN, BigDecimal payedByNow) {
-        this.ownerLogin = ownerLogin;
+    public Payment(ObjectId id, String paymentTitle, BigDecimal amountOfSinglePayment, BigDecimal wholeAmount, String deadline, String receiverIBAN, String receiverName, String senderIBAN, BigDecimal payedByNow) {
+        this.id = id;
         this.paymentTitle = paymentTitle;
         this.amountOfSinglePayment = amountOfSinglePayment;
         this.wholeAmount = wholeAmount;
@@ -25,12 +29,12 @@ public class Payment {
         this.payedByNow = payedByNow;
     }
 
-    public String getOwnerLogin() {
-        return ownerLogin;
+    public ObjectId getId() {
+        return id;
     }
 
-    public void setOwnerLogin(String ownerLogin) {
-        this.ownerLogin = ownerLogin;
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 
     public String getPaymentTitle() {
