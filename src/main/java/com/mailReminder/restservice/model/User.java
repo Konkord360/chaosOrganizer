@@ -1,48 +1,67 @@
 package com.mailReminder.restservice.model;
 
-import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+@Document(collection = "users")
 public class User {
     @Id
     private String id;
+
     @Indexed(unique = true)
-    private String login;
-    private String mail;
+    @NotBlank
+    @Size(max = 20)
+    private String username;
+
+    @NotBlank
+    @Size(max = 50)
+    @Email
+    private String email;
     private List<Reminder> reminders;
     private List<Payment> payments;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private char[] password;
+    @NotBlank
+    @Size(max = 120)
+    private String password;
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private byte[] salt;
 
-    public User(String login, String mail, char[] password) {
-        this.login = login;
-        this.mail = mail;
+    @DBRef
+    private Set<Role> roles = new HashSet<>();
+
+    public User(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
         this.password = password;
     }
 
-    public User(String id, String login, String mail, List<Reminder> reminders, List<Payment> payments, char[] password, byte[] salt) {
+    public User(String id, String username, String email, List<Reminder> reminders, List<Payment> payments, String password, byte[] salt) {
         this.id = id;
-        this.login = login;
-        this.mail = mail;
+        this.username = username;
+        this.email = email;
         this.reminders = reminders;
         this.payments = payments;
         this.password = password;
         this.salt = salt;
     }
 
-    public User(String login, String mail, List<Reminder> reminders, List<Payment> payments, char[] password, byte[] salt) {
-        this.login = login;
-        this.mail = mail;
+    public User(String username, String email, List<Reminder> reminders, List<Payment> payments, String password, byte[] salt) {
+        this.username = username;
+        this.email = email;
         this.reminders = reminders;
         this.payments = payments;
         this.password = password;
@@ -66,39 +85,39 @@ public class User {
     }
 
     public User() {
-        this.login = "";
-        this.mail = "";
+        this.username = "";
+        this.email = "";
         this.password = null;
         this.salt = null;
     }
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getMail() {
-        return mail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public char[] getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(char[] password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    public void setPasswordFromBytes(byte[] password) {
-        this.password = Base64.getEncoder().encodeToString(password).toCharArray();
-    }
+//    public void setPasswordFromBytes(byte[] password) {
+//        this.password = Base64.getEncoder().encodeToString(password).toCharArray();
+//    }
 
     public String getId() {
         return id;
@@ -114,5 +133,13 @@ public class User {
 
     public void setSalt(byte[] salt) {
         this.salt = salt;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }
