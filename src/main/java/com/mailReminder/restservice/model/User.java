@@ -1,6 +1,5 @@
 package com.mailReminder.restservice.model;
 
-import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -114,10 +113,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
-//    public void setPasswordFromBytes(byte[] password) {
-//        this.password = Base64.getEncoder().encodeToString(password).toCharArray();
-//    }
 
     public String getId() {
         return id;

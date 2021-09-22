@@ -17,17 +17,17 @@ public class Payment {
     private String senderIBAN;
     private BigDecimal payedByNow;
 
-    public Payment(ObjectId id, String paymentTitle, BigDecimal amountOfSinglePayment, BigDecimal wholeAmount, String deadline, String receiverIBAN, String receiverName, String senderIBAN, BigDecimal payedByNow) {
-        this.id = id;
-        this.paymentTitle = paymentTitle;
-        this.amountOfSinglePayment = amountOfSinglePayment;
-        this.wholeAmount = wholeAmount;
-        this.deadline = deadline;
-        this.receiverIBAN = receiverIBAN;
-        this.receiverName = receiverName;
-        this.senderIBAN = senderIBAN;
-        this.payedByNow = payedByNow;
-    }
+//    public Payment(ObjectId id, String paymentTitle, BigDecimal amountOfSinglePayment, BigDecimal wholeAmount, String deadline, String receiverIBAN, String receiverName, String senderIBAN, BigDecimal payedByNow) {
+//        this.id = id;
+//        this.paymentTitle = paymentTitle;
+//        this.amountOfSinglePayment = amountOfSinglePayment;
+//        this.wholeAmount = wholeAmount;
+//        this.deadline = deadline;
+//        this.receiverIBAN = receiverIBAN;
+//        this.receiverName = receiverName;
+//        this.senderIBAN = senderIBAN;
+//        this.payedByNow = payedByNow;
+//    }
 
     public ObjectId getId() {
         return id;

@@ -6,20 +6,6 @@ public class Reminder {
     private String hour;
     private String contents;
 
-    public Reminder() {
-        this.ownerLogin = null;
-        this.date = null;
-        this.hour = null;
-        this.contents = null;
-    }
-
-    public Reminder(String ownerLogin, String date, String hour, String contents) {
-        this.ownerLogin = ownerLogin;
-        this.date = date;
-        this.hour = hour;
-        this.contents = contents;
-    }
-
     public String getOwnerLogin() {
         return this.ownerLogin;
     }
@@ -50,17 +36,5 @@ public class Reminder {
 
     public void setContents(String contents) {
         this.contents = contents;
-    }
-
-    @Override
-    public boolean equals(Object reminder) {
-        if (reminder instanceof Reminder)
-            return this.ownerLogin.equals(((Reminder) reminder).getOwnerLogin()) &&
-                    this.date.equals(((Reminder) reminder).getDate()) &&
-                    this.hour.equals(((Reminder) reminder).getHour()) &&
-                    this.contents.equals(((Reminder) reminder).getContents());
-        else
-            return false;
-
     }
 }
