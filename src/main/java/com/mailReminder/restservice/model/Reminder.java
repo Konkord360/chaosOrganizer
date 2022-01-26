@@ -1,17 +1,20 @@
 package com.mailReminder.restservice.model;
 
+import java.time.LocalTime;
+
 public class Reminder {
-    private String ownerLogin;
     private String date;
-    private String hour;
+    private LocalTime reminderTime;
     private String contents;
+    private Payment payment;
 
-    public String getOwnerLogin() {
-        return this.ownerLogin;
-    }
 
-    public void setOwnerLogin(String ownerLogin) {
-        this.ownerLogin = ownerLogin;
+    public Reminder(final Payment payment){
+        if(payment != null)
+        this.payment = payment;
+        this.date = payment.getDeadline();
+        this.reminderTime = LocalTime.of(17, 30);
+        this.contents = "Reminding you about: " + payment.getPaymentTitle() + "Which is due to" + payment.getDeadline();
     }
 
     public String getDate() {
@@ -22,12 +25,12 @@ public class Reminder {
         this.date = date;
     }
 
-    public String getHour() {
-        return hour;
+    public LocalTime getReminderTime() {
+        return reminderTime;
     }
 
-    public void setHour(String hour) {
-        this.hour = hour;
+    public void setReminderTime(LocalTime reminderTime) {
+        this.reminderTime = reminderTime;
     }
 
     public String getContents() {
@@ -36,5 +39,13 @@ public class Reminder {
 
     public void setContents(String contents) {
         this.contents = contents;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
     }
 }

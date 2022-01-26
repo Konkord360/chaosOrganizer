@@ -1,5 +1,8 @@
 package com.mailReminder.restservice.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
@@ -16,18 +19,7 @@ public class Payment {
     private String receiverName;
     private String senderIBAN;
     private BigDecimal payedByNow;
-
-//    public Payment(ObjectId id, String paymentTitle, BigDecimal amountOfSinglePayment, BigDecimal wholeAmount, String deadline, String receiverIBAN, String receiverName, String senderIBAN, BigDecimal payedByNow) {
-//        this.id = id;
-//        this.paymentTitle = paymentTitle;
-//        this.amountOfSinglePayment = amountOfSinglePayment;
-//        this.wholeAmount = wholeAmount;
-//        this.deadline = deadline;
-//        this.receiverIBAN = receiverIBAN;
-//        this.receiverName = receiverName;
-//        this.senderIBAN = senderIBAN;
-//        this.payedByNow = payedByNow;
-//    }
+//    private Reminder reminder;
 
     public ObjectId getId() {
         return id;
@@ -100,4 +92,23 @@ public class Payment {
     public void setPayedByNow(BigDecimal payedByNow) {
         this.payedByNow = payedByNow;
     }
+
+    @Override
+    public String toString(){
+        ObjectWriter ow = new ObjectMapper().writer();
+        try {
+            return ow.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+//    public Reminder getReminder() {
+//        return reminder;
+//    }
+
+//    public void setReminder(Reminder reminder) {
+//        this.reminder = reminder;
+//    }
 }

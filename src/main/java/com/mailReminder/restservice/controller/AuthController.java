@@ -1,10 +1,15 @@
 package com.mailReminder.restservice.controller;
 
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.mailReminder.restservice.model.ERole;
 import com.mailReminder.restservice.model.Role;
 import com.mailReminder.restservice.model.User;
 import com.mailReminder.restservice.payload.request.LoginRequest;
+import com.mailReminder.restservice.payload.request.LoginWithGoogleRequest;
 import com.mailReminder.restservice.payload.request.SignupRequest;
 import com.mailReminder.restservice.payload.response.JwtResponse;
 import com.mailReminder.restservice.payload.response.MessageResponse;
@@ -23,9 +28,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -51,7 +56,7 @@ public class AuthController {
     public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
@@ -71,7 +76,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         final String ROLE_NOT_FOUND = "Error: Role is not found.";
-        if (Boolean.TRUE.equals(userRepository.existsByUsername(signUpRequest.getUsername()))) {
+        if (Boolean.TRUE.equals(userRepository.existsByEmail(signUpRequest.getEmail()))) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
@@ -84,7 +89,9 @@ public class AuthController {
         }
 
         // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
+        User user = new User(signUpRequest.getFirstName(),
+                signUpRequest.getSurname(),
+                signUpRequest.getFirstName() + signUpRequest.getSurname(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
 
@@ -122,4 +129,22 @@ public class AuthController {
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
+
+    @PostMapping("/loginWithGoogle")
+    public ResponseEntity<JwtResponse> loginWithGoogle(@RequestBody LoginWithGoogleRequest request) throws IOException {
+
+        System.out.println(request);
+        System.out.println(request.getToken());
+        GoogleIdTokenVerifier googleIdTokenVerifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory()).build();
+        try {
+            GoogleIdToken token = googleIdTokenVerifier.verify(request.getToken());
+            System.out.println(token.getPayload().getEmail());
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+            System.out.println("couldnt verify token");
+        }
+        System.out.println(request.getToken());
+        return ResponseEntity.ok(new JwtResponse("","","", "", List.of("")));
+    }
+
 }

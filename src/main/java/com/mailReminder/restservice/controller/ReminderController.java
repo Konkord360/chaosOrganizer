@@ -33,22 +33,22 @@ public class ReminderController {
         if(logger.isDebugEnabled()) {
             logger.debug(reminder.toString());
         }
-        User databaseUser = userRepository.findByUsername(reminder.getOwnerLogin());
+//        User databaseUser = userRepository.findByUsername(reminder.getOwnerLogin());
 
-        Optional<List<Reminder>> userReminders = Optional.ofNullable(databaseUser.getReminders());
-        if (userReminders.isPresent()) {
-            userReminders.get().add(reminder);
-            databaseUser.setReminders(userReminders.get());
-        } else
-            databaseUser.setReminders(List.of(reminder));
+//        Optional<List<Reminder>> userReminders = Optional.ofNullable(databaseUser.getReminders());
+//        if (userReminders.isPresent()) {
+//            userReminders.get().add(reminder);
+//            databaseUser.setReminders(userReminders.get());
+//        } else
+//            databaseUser.setReminders(List.of(reminder));
 
-        userRepository.save(databaseUser);
+//        userRepository.save(databaseUser);
         return ResponseEntity.status(HttpStatus.OK).body("{\"errorCode\":0,\"errorMessage\":\"OK\"}");
     }
 
     @GetMapping("/getReminders")
-    public ResponseEntity<Object> getReminder(@RequestParam String userLogin) {
-        User user = userRepository.findByUsername(userLogin);
+    public ResponseEntity<Object> getReminder(@RequestParam String userEmail) {
+        User user = userRepository.findByEmail(userEmail);
         List<Reminder> userReminders = user.getReminders();
 
         return ResponseEntity.status(HttpStatus.OK).body(userReminders);
@@ -56,7 +56,8 @@ public class ReminderController {
 
     @DeleteMapping("/deleteReminder")
     public ResponseEntity<Object> deleteReminder(@RequestBody Reminder reminder) {
-        User user = userRepository.findByUsername(reminder.getOwnerLogin());
+//        User user = userRepository.findByUsername(reminder.getOwnerLogin());
+        User user = null;
         Optional<Reminder> reminderToBeDeleted = user.getReminders().stream().filter(userReminder -> userReminder.equals(reminder)).findFirst();
         if (reminderToBeDeleted.isPresent()) {
             user.getReminders().remove(reminderToBeDeleted.get());

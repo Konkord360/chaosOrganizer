@@ -1,6 +1,7 @@
 package com.mailReminder.restservice.controller;
 
 import com.mailReminder.restservice.model.Payment;
+import com.mailReminder.restservice.model.Reminder;
 import com.mailReminder.restservice.model.User;
 import com.mailReminder.restservice.repository.UserRepository;
 import org.apache.logging.log4j.LogManager;
@@ -26,14 +27,15 @@ public class PaymentController {
     }
 
     @PostMapping("/addPayment")
-    public ResponseEntity<Object> addPayment(@RequestBody Payment payment, @RequestParam String ownerLogin) {
+    public ResponseEntity<Object> addPayment(@RequestBody Payment payment, @RequestParam String userEmail) {
         if(logger.isDebugEnabled()) {
-            logger.debug("Add payment request received for user: ".concat(ownerLogin));
+            logger.debug("Add payment request received for user: ".concat(userEmail));
             logger.debug(payment);
         }
-        User databaseUser = userRepository.findByUsername(ownerLogin);
+        User databaseUser = userRepository.findByEmail(userEmail);
         Optional<List<Payment>> userPayments = Optional.ofNullable(databaseUser.getPayments());
 
+//        payment.setReminder(new Reminder(payment));
         if (userPayments.isPresent()) {
             payment.setId(ObjectId.get());
             userPayments.get().add(payment);
@@ -46,8 +48,8 @@ public class PaymentController {
     }
 
     @PatchMapping("/modifyPayment")
-    public ResponseEntity<Object> modifyPayment(@RequestParam String ownerLogin, @RequestParam int paymentIndex, @RequestBody Payment payment) {
-        User user = userRepository.findByUsername(ownerLogin);
+    public ResponseEntity<Object> modifyPayment(@RequestParam String userEmail, @RequestParam int paymentIndex, @RequestBody Payment payment) {
+        User user = userRepository.findByEmail(userEmail);
         List<Payment> userPayments = user.getPayments();
 
         userPayments.remove(paymentIndex);
@@ -59,22 +61,24 @@ public class PaymentController {
     }
 
     @GetMapping("/getPayments")
-    public ResponseEntity<Object> getPayment(@RequestParam String userLogin) {
-        User user = userRepository.findByUsername(userLogin);
+    public ResponseEntity<Object> getPayment(@RequestParam String userEmail) {
+        User user = userRepository.findByEmail(userEmail);
         List<Payment> userPayments = user.getPayments();
 
         return ResponseEntity.status(HttpStatus.OK).body(userPayments);
     }
 
     @DeleteMapping("/deletePayment")
-    public ResponseEntity<Object> deletePayment(@RequestParam String ownerLogin, @RequestParam int paymentIndex) {
-        User user = userRepository.findByUsername(ownerLogin);
+    public ResponseEntity<Object> deletePayment(@RequestParam String userEmail, @RequestParam int paymentIndex) {
+        User user = userRepository.findByEmail(userEmail);
         List<Payment> userPayments = user.getPayments();
+
         if (userPayments != null && !userPayments.isEmpty() && userPayments.size() >= paymentIndex) {
             user.getPayments().remove(paymentIndex);
             userRepository.save(user);
             return ResponseEntity.status(HttpStatus.OK).body(user.getPayments());
         }
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"errorCode\":404,\"errorMessage\":\"Reminder not found\"}");
     }
 }

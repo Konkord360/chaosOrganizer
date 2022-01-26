@@ -25,6 +25,12 @@ public class User {
     private String username;
 
     @NotBlank
+    private String firstName;
+
+    @NotBlank
+    private String surname;
+
+    @NotBlank
     @Size(max = 50)
     @Email
     private String email;
@@ -36,35 +42,31 @@ public class User {
     @Size(max = 120)
     private String password;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private byte[] salt;
-
     @DBRef
     private Set<Role> roles = new HashSet<>();
 
-    public User(String username, String email, String password) {
+    public User(String firstName, String surname, String username, String email, String password) {
+        this.firstName = firstName;
+        this.surname = surname;
         this.username = username;
         this.email = email;
         this.password = password;
     }
 
-    public User(String id, String username, String email, List<Reminder> reminders, List<Payment> payments, String password, byte[] salt) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.reminders = reminders;
-        this.payments = payments;
-        this.password = password;
-        this.salt = salt;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public User(String username, String email, List<Reminder> reminders, List<Payment> payments, String password, byte[] salt) {
-        this.username = username;
-        this.email = email;
-        this.reminders = reminders;
-        this.payments = payments;
-        this.password = password;
-        this.salt = salt;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public List<Reminder> getReminders() {
@@ -87,7 +89,6 @@ public class User {
         this.username = "";
         this.email = "";
         this.password = null;
-        this.salt = null;
     }
 
     public String getUsername() {
@@ -120,14 +121,6 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public byte[] getSalt() {
-        return salt;
-    }
-
-    public void setSalt(byte[] salt) {
-        this.salt = salt;
     }
 
     public Set<Role> getRoles() {
