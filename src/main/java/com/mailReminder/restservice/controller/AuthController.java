@@ -17,12 +17,17 @@ import com.mailReminder.restservice.repository.RoleRepository;
 import com.mailReminder.restservice.repository.UserRepository;
 import com.mailReminder.restservice.services.UserDetailsImpl;
 import com.mailReminder.restservice.services.jwt.JwtUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -54,7 +59,6 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
@@ -138,7 +142,40 @@ public class AuthController {
         GoogleIdTokenVerifier googleIdTokenVerifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory()).build();
         try {
             GoogleIdToken token = googleIdTokenVerifier.verify(request.getToken());
-            System.out.println(token.getPayload().getEmail());
+            GoogleIdToken.Payload payload = token.getPayload();
+            System.out.println(payload.getEmail());
+            User user = userRepository.findByEmail(payload.getEmail());
+            LoginRequest loginRequest = new LoginRequest();
+
+            if(user == null)
+            {
+                SignupRequest signupRequest = new SignupRequest();
+                signupRequest.setEmail(payload.getEmail());
+                signupRequest.setFirstName(payload.get("given_name").toString());
+                signupRequest.setSurname(payload.get("family_name").toString());
+                signupRequest.setRole(null);
+                signupRequest.setPassword(RandomStringUtils.random(30, true, true));
+                registerUser(signupRequest);
+                user = userRepository.findByEmail(payload.getEmail());
+                //create new User with randomized password
+            }
+            loginRequest.setPassword(user.getPassword());
+            loginRequest.setEmail(user.getEmail());
+            Authentication authentication = new UsernamePasswordAuthenticationToken(UserDetailsImpl.build(user), "", AuthorityUtils.createAuthorityList("ROLE_USER"));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateJwtToken(authentication);
+
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(new JwtResponse(jwt,
+                    userDetails.getId(),
+                    userDetails.getUsername(),
+                    userDetails.getEmail(),
+                    roles));
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
             System.out.println("couldnt verify token");
